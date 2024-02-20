@@ -8,11 +8,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.time.*;
+import java.time.Duration;
+
 import static org.testng.Assert.*;
 
 public class TVpage extends Browser {
-
 
     private static final String brandLocator = "//ul[@class='catalog-form__checkbox-list']//div[text()='%s']";
     private static final String resolutionLocator = "//ul[@class='catalog-form__checkbox-list']//div[text()='%s']";
@@ -21,6 +21,7 @@ public class TVpage extends Browser {
     private static final String diagonalTo = "//ul//div[contains(text(),'%s')]";
     public static final String parentLocator = "//div[@class='catalog-form__offers-unit catalog-form__offers-unit_primary']";
     public static final String childLocator = "//div/a[contains(text(),'Телевизор')]";
+    public static final String filterItem = "//div[@class='catalog-form__tag-item'][4]";
     private static final String title = "//h1";
     private static final String price = "//div[@class='offers-description__price-group']//a";
     private static final String resolution = "//td[contains(text(), 'Разрешение')]/following-sibling::td//span";
@@ -32,6 +33,7 @@ public class TVpage extends Browser {
                 .until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(locator))));
         return locatedElement;
     }
+
     private static WebElement locatorByText(String locator, String text) {
         WebElement locatedElement = (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(locator, text))));
@@ -41,38 +43,40 @@ public class TVpage extends Browser {
     public static void brandCheckBox(String brand) {
         JavascriptExecutor ex = (JavascriptExecutor) driver;
         ex.executeScript("arguments[0].click()", locatorByText(brandLocator, brand));
-
     }
+
     public static void resolutionCheckBox(String resolution) {
         JavascriptExecutor ex = (JavascriptExecutor) driver;
         ex.executeScript("arguments[0].click()", locatorByText(resolutionLocator, resolution));
     }
+
     public static void setPriceInput(String value) {
         JavascriptExecutor ex = (JavascriptExecutor) driver;
         ex.executeScript("arguments[0].scrollIntoView();", locator(priceInput));
         locator(priceInput).sendKeys(value);
     }
+
     public static void setDiagonalFrom(String value) {
         JavascriptExecutor ex = (JavascriptExecutor) driver;
         ex.executeScript("arguments[0].click()", locatorByText(diagonalFrom, value));
     }
+
     public static void setDiagonalTo(String value) {
         JavascriptExecutor ex = (JavascriptExecutor) driver;
         ex.executeScript("arguments[0].click()", locatorByText(diagonalTo, value));
     }
 
-    public static void checkResult(String parent, String child) throws ParseException{
-
-        JavascriptExecutor js = (JavascriptExecutor)driver;
+    public static void checkResult(String parent, String child) throws ParseException {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].scrollIntoView();", locator(title));
 
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+        boolean filterCountCorrect = locator(filterItem).isDisplayed();
+        assertTrue(filterCountCorrect);
 
         driver.navigate().refresh();
 
-          int count = (driver.findElements(By.xpath(parent))).size();
+            int count = (driver.findElements(By.xpath(parent))).size();
 
-         System.out.println(count);
             for (int i = 1; i <= count; i++) {
 
                 locator(parent + "[" + i + "]" + child).click();
@@ -97,5 +101,6 @@ public class TVpage extends Browser {
 
         }
     }
+
 
 

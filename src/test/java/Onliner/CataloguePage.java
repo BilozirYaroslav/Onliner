@@ -20,6 +20,7 @@ public class CataloguePage extends Browser {
     }
 
     public static void pageTvVerification() {
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
         boolean TV_Displayed = driver.findElement(By.xpath(pageTV)).isDisplayed();
         if (!TV_Displayed) {
             throw new IllegalStateException("This is not the TV page");
