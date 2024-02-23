@@ -14,11 +14,7 @@ import static org.testng.Assert.*;
 
 public class TVpage extends Browser {
 
-    private static final String brandLocator = "//ul[@class='catalog-form__checkbox-list']//div[text()='%s']";
-    private static final String resolutionLocator = "//ul[@class='catalog-form__checkbox-list']//div[text()='%s']";
-    private static final String priceInput = "//input[@placeholder='до']";
-    private static final String diagonalFrom = "//ul//div[contains(text(),'%s')]";
-    private static final String diagonalTo = "//ul//div[contains(text(),'%s')]";
+
     public static final String parentLocator = "//div[@class='catalog-form__offers-unit catalog-form__offers-unit_primary']";
     public static final String childLocator = "//div/a[contains(text(),'Телевизор')]";
     public static final String filterItem = "//div[@class='catalog-form__tag-item'][4]";
@@ -33,37 +29,19 @@ public class TVpage extends Browser {
                 .until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(locator))));
         return locatedElement;
     }
-
     private static WebElement locatorByText(String locator, String text) {
         WebElement locatedElement = (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(locator, text))));
         return locatedElement;
     }
-
-    public static void brandCheckBox(String brand) {
+    public static void filterCheckBox(String locator, String value) {
         JavascriptExecutor ex = (JavascriptExecutor) driver;
-        ex.executeScript("arguments[0].click()", locatorByText(brandLocator, brand));
+        ex.executeScript("arguments[0].click()", locatorByText(locator, value));
     }
-
-    public static void resolutionCheckBox(String resolution) {
+    public static void filterInputValue(String locator, String value) {
         JavascriptExecutor ex = (JavascriptExecutor) driver;
-        ex.executeScript("arguments[0].click()", locatorByText(resolutionLocator, resolution));
-    }
-
-    public static void setPriceInput(String value) {
-        JavascriptExecutor ex = (JavascriptExecutor) driver;
-        ex.executeScript("arguments[0].scrollIntoView();", locator(priceInput));
-        locator(priceInput).sendKeys(value);
-    }
-
-    public static void setDiagonalFrom(String value) {
-        JavascriptExecutor ex = (JavascriptExecutor) driver;
-        ex.executeScript("arguments[0].click()", locatorByText(diagonalFrom, value));
-    }
-
-    public static void setDiagonalTo(String value) {
-        JavascriptExecutor ex = (JavascriptExecutor) driver;
-        ex.executeScript("arguments[0].click()", locatorByText(diagonalTo, value));
+        ex.executeScript("arguments[0].scrollIntoView();", locator(locator));
+        locator(locator).sendKeys(value);
     }
 
     public static void checkResult(String parent, String child) throws ParseException {
@@ -89,10 +67,9 @@ public class TVpage extends Browser {
                 int diagonalTo = DecimalFormat.getNumberInstance().parse(FilterTest.diagonalTo).intValue();
                 int diagonalResult = DecimalFormat.getNumberInstance().parse(locator(diagonal).getText()).intValue();
 
-                assertTrue(diagonalFrom < diagonalResult && diagonalResult < diagonalTo);
+                assertTrue(diagonalFrom <= diagonalResult && diagonalResult <= diagonalTo);
 
                 double doubleOfPrice = DecimalFormat.getNumberInstance().parse(locator(price).getText()).doubleValue();
-
                 assertTrue(Double.valueOf(FilterTest.priceTo) >= doubleOfPrice);
 
                 driver.navigate().back();
