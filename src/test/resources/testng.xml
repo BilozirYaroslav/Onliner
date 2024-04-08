@@ -3,7 +3,7 @@
 <suite name="Suite">
     <test name="Test">
         <classes>
-            <class name="Onliner.FilterTest"/>
+            <class name="tests.FilterTest"/>
         </classes>
     </test>
 </suite>
